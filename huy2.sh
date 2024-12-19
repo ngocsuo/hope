@@ -15,9 +15,9 @@ gen64() {
     echo "$1:$(ip64):$(ip64):$(ip64):$(ip64)"
 }
 
-# Install necessary packages
+# Install necessary packages (changed to use dnf for CentOS 9)
 echo "Installing required packages..."
-yum install -y gcc gcc-c++ net-tools tar zip make wget curl >/dev/null
+dnf install -y gcc gcc-c++ net-tools tar zip make wget curl iptables-services >/dev/null
 
 # Create working directory
 WORKDIR="/home/proxy-installer"
@@ -120,6 +120,11 @@ ulimit -n 65535
 /usr/local/etc/3proxy/bin/3proxy /usr/local/etc/3proxy/3proxy.cfg &
 EOF
 chmod +x /etc/rc.local
+
+# Enable rc.local on boot (if it's not enabled)
+chmod +x /etc/rc.d/rc.local
+systemctl enable rc-local
+systemctl start rc-local
 
 # Start 3proxy
 echo "Starting 3proxy..."
